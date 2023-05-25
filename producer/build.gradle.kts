@@ -15,6 +15,10 @@ open class CompileJava : DefaultTask() {
 }
 
 open class Jar : DefaultTask() {
+
+    init {
+        group = "build"
+    }
     @TaskAction
     fun action() {
         println("$name assemble jar")
@@ -33,6 +37,6 @@ val compileJava = tasks.register<CompileJava>("compileJava") {
 }
 
 
-val jar = tasks.register<CompileJava>("jar") {
+val jar = tasks.register<Jar>("jar") {
     println("$name configuration")
 }
