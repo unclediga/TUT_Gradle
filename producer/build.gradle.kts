@@ -1,20 +1,21 @@
 println("producer\build.gradle.kts")
 
-abstract class CompileJava : DefaultTask() {
+abstract class CompileJava : AbstractExecTask<CompileJava>(CompileJava::class.java) {
+
+    @get:InputDirectory
+    abstract val sourcesDirectory: DirectoryProperty
 
     @get:OutputDirectory
     abstract val classesDirectory: DirectoryProperty
 
-    @TaskAction
-    fun action() {
+    override fun exec() {
         println("$name compile java in producer")
-        project.exec {
-            executable = "javac"
-            args = listOf(
-                "-d", classesDirectory.get().asFile.path,
-                "src/main/java/*.java"
-            )
-        }
+
+        val sourceFiles = sourcesDirectory.asFileTree.map { it.path }
+
+        executable = "javac"
+        args(listOf("-d", classesDirectory.get().asFile.path) + sourceFiles)
+        super.exec()
     }
 }
 
@@ -22,6 +23,7 @@ val compileJava = tasks.register<CompileJava>("compileJava") {
     println("$name configuration")
     //classesDirectory.set(File("build\\classes"))
     classesDirectory.set(layout.buildDirectory.dir("classes"))
+    sourcesDirectory.set(layout.projectDirectory.dir("src/main/java"))
 }
 
 
