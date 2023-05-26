@@ -18,7 +18,10 @@ abstract class CompileJava : DefaultTask() {
     }
 }
 
-open class Jar : DefaultTask() {
+abstract class Jar : DefaultTask() {
+
+    @get:InputDirectory
+    abstract val classesDirectory: DirectoryProperty
 
     init {
         group = "build"
@@ -46,4 +49,5 @@ val compileJava = tasks.register<CompileJava>("compileJava") {
 
 val jar = tasks.register<Jar>("jar") {
     println("$name configuration")
+    classesDirectory.set(compileJava.flatMap { it.classesDirectory })
 }
