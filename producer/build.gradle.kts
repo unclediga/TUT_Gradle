@@ -1,7 +1,9 @@
 println("producer\build.gradle.kts")
 
+@CacheableTask
 abstract class CompileJava : AbstractExecTask<CompileJava>(CompileJava::class.java) {
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
     abstract val sourcesDirectory: DirectoryProperty
 
