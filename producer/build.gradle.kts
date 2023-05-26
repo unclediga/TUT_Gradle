@@ -18,31 +18,6 @@ abstract class CompileJava : DefaultTask() {
     }
 }
 
-abstract class Jar : DefaultTask() {
-
-    @get:InputDirectory
-    abstract val classesDirectory: DirectoryProperty
-
-    @get:OutputDirectory
-    abstract val jarDirectory: DirectoryProperty
-
-    init {
-        group = "build"
-    }
-
-    @TaskAction
-    fun action() {
-        println("$name assemble jar")
-        project.exec {
-            executable = "jar"
-            args = listOf(
-                "cvf", jarDirectory.get().asFile.path + "/producer.jar",
-                "-C", classesDirectory.get().asFile.path, "."
-            )
-        }
-    }
-}
-
 val compileJava = tasks.register<CompileJava>("compileJava") {
     println("$name configuration")
     //classesDirectory.set(File("build\\classes"))
@@ -51,7 +26,8 @@ val compileJava = tasks.register<CompileJava>("compileJava") {
 
 
 val jar = tasks.register<Jar>("jar") {
-    println("$name configuration")
-    classesDirectory.set(compileJava.flatMap { it.classesDirectory })
-    jarDirectory.set(layout.buildDirectory.dir("libs"))
+    println("$name configuration ")
+    from(compileJava.flatMap { it.classesDirectory })
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+    archiveBaseName.set(project.name)
 }
