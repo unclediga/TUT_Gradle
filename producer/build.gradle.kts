@@ -1,9 +1,9 @@
 println("producer\build.gradle.kts")
 
-open class CompileJava : DefaultTask() {
+abstract class CompileJava : DefaultTask() {
 
     @get:OutputDirectory
-    val classesDirectory: DirectoryProperty = project.objects.directoryProperty()
+    abstract val classesDirectory: DirectoryProperty
 
     @TaskAction
     fun action() {
