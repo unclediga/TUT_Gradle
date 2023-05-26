@@ -1,13 +1,17 @@
 println("producer\build.gradle.kts")
 
 open class CompileJava : DefaultTask() {
+
+    @get:OutputDirectory
+    val classesDirectory: DirectoryProperty = project.objects.directoryProperty()
+
     @TaskAction
     fun action() {
         println("$name compile java in producer")
         project.exec {
             executable = "javac"
             args = listOf(
-                "-d", "build/classes",
+                "-d", classesDirectory.get().asFile.path,
                 "src/main/java/*.java"
             )
         }
@@ -19,10 +23,11 @@ open class Jar : DefaultTask() {
     init {
         group = "build"
     }
+
     @TaskAction
     fun action() {
         println("$name assemble jar")
-        project.exec{
+        project.exec {
             executable = "jar"
             args = listOf(
                 "cvf", "build\\libs\\producer.jar",
@@ -34,6 +39,8 @@ open class Jar : DefaultTask() {
 
 val compileJava = tasks.register<CompileJava>("compileJava") {
     println("$name configuration")
+    classesDirectory.set(File("build\\classes"))
+    classesDirectory.set(layout.buildDirectory.dir("classes"))
 }
 
 
